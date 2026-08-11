@@ -18,7 +18,8 @@ const mobileFilterSummary = document.querySelector('#mobileFilterSummary');
 const sliders = {
   intensity: document.querySelector('#intensity'),
   vignette: document.querySelector('#vignette'),
-  grain: document.querySelector('#grain')
+  grain: document.querySelector('#grain'),
+  distortion: document.querySelector('#distortion')
 };
 
 const presets = {
@@ -52,6 +53,8 @@ const sourceCanvas = document.createElement('canvas');
 let sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
 const previewSourceCanvas = document.createElement('canvas');
 const previewSourceCtx = previewSourceCanvas.getContext('2d', { willReadFrequently: true });
+const distortionCanvas = document.createElement('canvas');
+const distortionCtx = distortionCanvas.getContext('2d');
 const mobileQuery = window.matchMedia('(max-width: 900px)');
 const downloadButtonMarkup = downloadButton.innerHTML;
 
@@ -100,6 +103,27 @@ function drawDate(targetCtx, targetCanvas) {
   targetCtx.restore();
 }
 
+function applyDigitalSoftness(targetCtx, targetCanvas, amount) {
+  if (amount <= 0) return;
+
+  const scale = 1 - amount * .55;
+  const reducedWidth = Math.max(1, Math.round(targetCanvas.width * scale));
+  const reducedHeight = Math.max(1, Math.round(targetCanvas.height * scale));
+
+  if (distortionCanvas.width !== reducedWidth) distortionCanvas.width = reducedWidth;
+  if (distortionCanvas.height !== reducedHeight) distortionCanvas.height = reducedHeight;
+
+  distortionCtx.clearRect(0, 0, reducedWidth, reducedHeight);
+  distortionCtx.imageSmoothingEnabled = true;
+  distortionCtx.imageSmoothingQuality = 'low';
+  distortionCtx.drawImage(targetCanvas, 0, 0, reducedWidth, reducedHeight);
+
+  targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+  targetCtx.imageSmoothingEnabled = true;
+  targetCtx.imageSmoothingQuality = 'low';
+  targetCtx.drawImage(distortionCanvas, 0, 0, targetCanvas.width, targetCanvas.height);
+}
+
 function applyFilter(source, target, includeDate = true) {
   target.width = source.width;
   target.height = source.height;
@@ -112,15 +136,26 @@ function applyFilter(source, target, includeDate = true) {
   const intensity = Number(sliders.intensity.value) / 100;
   const vignette = Number(sliders.vignette.value) / 100;
   const grain = Number(sliders.grain.value) / 100;
+  const distortion = Number(sliders.distortion.value) / 100;
+  const quantizationStep = 1 + Math.round(distortion * 15);
+  const inverseQuantizationStep = 1 / quantizationStep;
   const width = target.width;
   const height = target.height;
   const cx = width / 2;
   const cy = height / 2;
   const inverseMaxDistanceSquared = 1 / (cx * cx + cy * cy);
+  const blockErrors = distortion > 0 ? new Float32Array(Math.ceil(width / 8)) : null;
 
   for (let y = 0; y < height; y++) {
     const centerY = y - cy;
     const normalizedY = y / height;
+
+    if (blockErrors && y % 8 === 0) {
+      const blockY = Math.floor(y / 8);
+      for (let blockX = 0; blockX < blockErrors.length; blockX++) {
+        blockErrors[blockX] = fastNoise(blockX, blockY) * distortion * 6;
+      }
+    }
 
     for (let x = 0; x < width; x++) {
       const index = (y * width + x) * 4;
@@ -155,13 +190,25 @@ function applyFilter(source, target, includeDate = true) {
       g += noise;
       b += noise;
 
-      data[index] = clamp(originalR + (r - originalR) * intensity);
-      data[index + 1] = clamp(originalG + (g - originalG) * intensity);
-      data[index + 2] = clamp(originalB + (b - originalB) * intensity);
+      const mixedR = originalR + (r - originalR) * intensity;
+      const mixedG = originalG + (g - originalG) * intensity;
+      const mixedB = originalB + (b - originalB) * intensity;
+
+      if (distortion > 0) {
+        const blockError = blockErrors[Math.floor(x / 8)];
+        data[index] = clamp(Math.round((mixedR + blockError) * inverseQuantizationStep) * quantizationStep);
+        data[index + 1] = clamp(Math.round((mixedG + blockError) * inverseQuantizationStep) * quantizationStep);
+        data[index + 2] = clamp(Math.round((mixedB + blockError) * inverseQuantizationStep) * quantizationStep);
+      } else {
+        data[index] = clamp(mixedR);
+        data[index + 1] = clamp(mixedG);
+        data[index + 2] = clamp(mixedB);
+      }
     }
   }
 
   targetCtx.putImageData(image, 0, 0);
+  applyDigitalSoftness(targetCtx, target, distortion);
   if (includeDate) drawDate(targetCtx, target);
 }
 

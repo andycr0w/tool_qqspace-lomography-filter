@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#dcecf4">
   <meta name="description" content="一款在浏览器本地为照片添加 2010 年前后空间相册 LOMO 氛围的静态图片工具。">
   <title>拾光 LOMO｜把照片洗回 2010</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -130,6 +131,10 @@
               <label class="slider-row" for="grain">
                 <span>胶片颗粒 <output id="grainValue" for="grain">24%</output></span>
                 <input id="grain" type="range" min="0" max="100" value="24">
+              </label>
+              <label class="slider-row" for="distortion">
+                <span>旧化失真 <output id="distortionValue" for="distortion">22%</output></span>
+                <input id="distortion" type="range" min="0" max="100" value="22">
               </label>
             </div>
           </div>
