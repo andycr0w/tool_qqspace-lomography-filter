@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#dcecf4">
+  <meta name="description" content="一款在浏览器本地为照片添加 2010 年前后空间相册 LOMO 氛围的静态图片工具。">
+  <title>拾光 LOMO｜把照片洗回 2010</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#studio">跳到照片工作台</a>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="拾光 LOMO 首页">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" role="img"><path d="M7 10h5l2-3h5l2 3h4a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V13a3 3 0 0 1 3-3Z"/><circle cx="16" cy="18" r="5"/><path d="M24 14h.01"/></svg>
+      </span>
+      <span><strong>拾光</strong><small>LOMO 冲印室</small></span>
+    </a>
+    <div class="header-note">
+      <span class="status-dot" aria-hidden="true"></span>
+      图片只在你的浏览器里处理
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="intro-copy">
+        <p class="eyebrow">空间相册 · 2010 MEMORY LAB</p>
+        <h1 id="page-title">把今天的照片，<br><em>洗回 2010。</em></h1>
+        <p class="lede">偏青的暗部、暖黄的高光、夸张暗角和一点旧胶片颗粒——那年我们会把心情写在照片下面。</p>
+      </div>
+      <aside class="memory-card" aria-label="怀旧便签">
+        <span class="tape tape-top" aria-hidden="true"></span>
+        <p>“不是相机不好，<br>是青春自带滤镜。”</p>
+        <span>— 留言于 2010-08-12</span>
+      </aside>
+    </section>
+
+    <section class="studio" id="studio" aria-labelledby="studio-title">
+      <div class="studio-bar">
+        <div>
+          <p class="window-kicker">PHOTO STUDIO / 在线冲印</p>
+          <h2 id="studio-title">我的照片工作台</h2>
+        </div>
+        <div class="window-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+
+      <div class="studio-grid">
+        <section class="preview-panel" aria-label="照片预览">
+          <div class="photo-desk">
+            <span class="tape photo-tape" aria-hidden="true"></span>
+            <div class="photo-paper" id="dropZone">
+              <div class="canvas-wrap">
+                <canvas id="previewCanvas" aria-label="应用滤镜后的照片预览"></canvas>
+                <div class="drop-overlay" id="dropOverlay" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+                  <strong>松开，放进冲印室</strong>
+                </div>
+              </div>
+              <div class="photo-caption">
+                <span id="photoName">sample_memory.jpg</span>
+                <time id="dateStamp">2010.08.12</time>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-actions">
+            <label class="button button-primary" for="fileInput">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+              选择一张照片
+            </label>
+            <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+            <button class="button button-secondary" id="compareButton" type="button" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5 5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg>
+              按住看原图
+            </button>
+          </div>
+          <p class="upload-hint" id="uploadHint">支持 JPG、PNG、WebP，也可以把图片拖到相纸上。</p>
+        </section>
+
+        <section class="controls-panel" id="filterPanel" aria-label="滤镜设置" aria-hidden="false">
+          <div class="drawer-header">
+            <div>
+              <span>FILTER SETTINGS</span>
+              <strong>调整滤镜</strong>
+            </div>
+            <button class="drawer-close" id="closeFilterPanel" type="button" aria-label="关闭滤镜面板">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+            </button>
+          </div>
+          <div class="control-section">
+            <div class="section-heading">
+              <div><span>01</span><h3>选一卷胶片</h3></div>
+              <p id="presetDescription">泛黄、褪色，像翻出旧相册的午后。</p>
+            </div>
+            <div class="preset-grid" role="radiogroup" aria-label="LOMO 滤镜">
+              <button class="preset is-active" type="button" role="radio" aria-checked="true" data-preset="memory">
+                <span class="preset-swatch swatch-memory" aria-hidden="true"></span>
+                <strong>旧时光</strong><small>暖黄褪色</small>
+              </button>
+              <button class="preset" type="button" role="radio" aria-checked="false" data-preset="youth">
+                <span class="preset-swatch swatch-youth" aria-hidden="true"></span>
+                <strong>青涩夏日</strong><small>青蓝暗部</small>
+              </button>
+              <button class="preset" type="button" role="radio" aria-checked="false" data-preset="leak">
+                <span class="preset-swatch swatch-leak" aria-hidden="true"></span>
+                <strong>漏光日记</strong><small>橘红漏光</small>
+              </button>
+              <button class="preset" type="button" role="radio" aria-checked="false" data-preset="night">
+                <span class="preset-swatch swatch-night" aria-hidden="true"></span>
+                <strong>夜游人间</strong><small>高反差紫调</small>
+              </button>
+            </div>
+          </div>
+
+          <div class="control-section sliders-section">
+            <div class="section-heading compact"><div><span>02</span><h3>调一调味道</h3></div></div>
+            <div class="slider-list">
+              <label class="slider-row" for="intensity">
+                <span>滤镜浓度 <output id="intensityValue" for="intensity">82%</output></span>
+                <input id="intensity" type="range" min="0" max="100" value="82">
+              </label>
+              <label class="slider-row" for="vignette">
+                <span>四周暗角 <output id="vignetteValue" for="vignette">48%</output></span>
+                <input id="vignette" type="range" min="0" max="100" value="48">
+              </label>
+              <label class="slider-row" for="grain">
+                <span>胶片颗粒 <output id="grainValue" for="grain">24%</output></span>
+                <input id="grain" type="range" min="0" max="100" value="24">
+              </label>
+            </div>
+          </div>
+
+          <div class="control-section finish-section">
+            <div class="section-heading compact"><div><span>03</span><h3>写下拍摄日期</h3></div></div>
+            <div class="date-controls">
+              <label for="photoDate">照片日期</label>
+              <input id="photoDate" type="date" value="2010-08-12">
+              <label class="switch-label" for="showDate">
+                <span>印在照片上</span>
+                <input id="showDate" type="checkbox" checked>
+                <i aria-hidden="true"></i>
+              </label>
+            </div>
+          </div>
+
+          <div class="download-block">
+            <button class="button button-download" id="downloadButton" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0 4.5-4.5M12 16l-4.5-4.5M5 20h14"/></svg>
+              保存这张回忆
+            </button>
+            <p>导出 PNG · 高清尺寸 · 无水印</p>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <div class="drawer-backdrop" id="filterBackdrop" hidden></div>
+    <div class="mobile-filter-dock" id="mobileFilterDock">
+      <button id="openFilterPanel" type="button" aria-controls="filterPanel" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M10 14v6"/></svg>
+        <span><strong>调整滤镜</strong><small id="mobileFilterSummary">旧时光 · 浓度 82%</small></span>
+        <svg class="dock-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 14 4-4 4 4"/></svg>
+      </button>
+    </div>
+
+    <section class="recipe" aria-labelledby="recipe-title">
+      <div>
+        <p class="eyebrow">THE 2010 RECIPE</p>
+        <h2 id="recipe-title">一张“空间感”照片<br>是怎么洗出来的？</h2>
+      </div>
+      <ol>
+        <li><span>偏色</span><p>阴影里加一点青，高光里留一层旧旧的暖黄。</p></li>
+        <li><span>暗角</span><p>让四周沉下去，视线自然落回画面中央。</p></li>
+        <li><span>颗粒</span><p>不必太干净，数码照片也能带一点胶片脾气。</p></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <span>拾光 LOMO © 2010 → NOW</span>
+    <span>不上传 · 不保存 · 不窥探</span>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
