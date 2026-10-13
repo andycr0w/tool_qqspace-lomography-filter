@@ -2,9 +2,9 @@
 
 一个无后端、纯静态部署、在浏览器运行的怀旧照片滤镜工具。
 
-视觉与成片效果参考 2010 年前后空间相册常见的 LOMO 风格。
+视觉与成片效果参考 2010 年前后空间相册常见的 LOMO 风格。做这个纯粹怀旧了。
 
-了解更管有关Lomography的内容→ https://www.lomography.com/
+了解更多Lomography的相关内容→ https://www.lomography.com/
 
 ## 功能
 
@@ -20,7 +20,11 @@
 
 ## 运行
 
-直接打开 `index.html`，或在本目录启动任意静态文件服务器。例如：
+1.直接打开 `index.html`。
+
+2.或在本目录启动任意静态文件服务器。
+
+例如：
 
 ```powershell
 python -m http.server 8080
